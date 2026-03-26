@@ -9,7 +9,7 @@
 
 В качестве ответа в репозиторий шаблона с решением добавьте скриншоты с настройками раннера в проекте.
 ![1.png](https://github.com/anarxim7/Postnikov_Igor-homework/blob/main/img/1.png)
-![1.1png](https://github.com/anarxim7/Postnikov_Igor-homework/blob/main/img/1.1png)
+![1.1.png](https://github.com/anarxim7/Postnikov_Igor-homework/blob/main/img/1.1.png)
 
 
 ---
@@ -88,5 +88,5 @@ deploy-job:
 ```
 
 ![2.png](https://github.com/anarxim7/Postnikov_Igor-homework/blob/main/img/2.png)
-![2.1png](https://github.com/anarxim7/Postnikov_Igor-homework/blob/main/img/2.1png)
+![2.1.png](https://github.com/anarxim7/Postnikov_Igor-homework/blob/main/img/2.1.png)
 
