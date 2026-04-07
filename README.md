@@ -1,92 +1,61 @@
 
 ### Задание 1
 
-Что нужно сделать:
+Установите Zabbix Server с веб-интерфейсом.
 
-    Разверните GitLab локально, используя Vagrantfile и инструкцию, описанные в этом репозитории.
-    Создайте новый проект и пустой репозиторий в нём.
-    Зарегистрируйте gitlab-runner для этого проекта и запустите его в режиме Docker. Раннер можно регистрировать и запускать на той же виртуальной машине, на которой запущен GitLab.
-
-В качестве ответа в репозиторий шаблона с решением добавьте скриншоты с настройками раннера в проекте.
 ![1.png](https://github.com/anarxim7/Postnikov_Igor-homework/blob/main/img/1.png)
-![1.1.png](https://github.com/anarxim7/Postnikov_Igor-homework/blob/main/img/1.1.png)
-
-
----
-
-### Задание 2
-
-Что нужно сделать:
-
-    Запушьте репозиторий на GitLab, изменив origin. Это изучалось на занятии по Git.
-    Создайте .gitlab-ci.yml, описав в нём все необходимые, на ваш взгляд, этапы.
-
-В качестве ответа в шаблон с решением добавьте:
-
-    файл gitlab-ci.yml для своего проекта или вставьте код в соответствующее поле в шаблоне;
 
 ```
 Поле для вставки кода...
 ....
 ....
-stages:
-  - build
-  - test
-  - deploy
+apt install postgresql
+wget https://repo.zabbix.com/zabbix/7.4/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_7.4+debian13_all.deb
+dpkg -i zabbix-release_latest_7.4+debian13_all.deb
+apt update 
+apt install zabbix-server-pgsql zabbix-frontend-php php8.4-pgsql zabbix-apache-conf zabbix-sql-scripts
+sudo -u postgres createuser --pwprompt zabbix
+sudo -u postgres createdb -O zabbix zabbix 
+zcat /usr/share/zabbix/sql-scripts/postgresql/server.sql.gz | sudo -u zabbix psql zabbix 
+systemctl restart zabbix-server zabbix-agent apache2
+systemctl enable zabbix-server zabbix-agent apache2 
+....
+....
+```
 
-variables:
-    MAVEN_OPTS: "-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository"
+---
 
-cache:
-  paths:
-    - .m2/repository/
+### Задание 2
 
-build-job:
-  stage: build
-  script:
-    - echo "Starting build process..."
-    - echo "Compiling the code..."
-    - mvn clean compile
-    - echo "Build completed successfully!"
-  artifacts:
-    paths:
-      - target/ 
-    expire_in: 1 hour
-  tags:
-    - docker
+Установите Zabbix Agent на два хоста.
 
-test-job:
-  stage: test
-  script:
-    - echo "Running tests..."
-    - mvn test
-    - echo "All tests passed!"
-  dependencies:
-    - build-job
-  tags:
-    - docker
+```
+Поле для вставки кода...
+....
+....
+#На Zabbix server
+sudo apt install zabbix-agent
+sudo systemctl restart zabbix-agent
+sudo systemctl enable zabbix-agent 
 
-deploy-job:
-  stage: deploy
-  script:
-    - echo "Deploying application..."
-    - docker build -t myapp:$CI_COMMIT_SHORT_SHA .
-    - docker tag myapp:$CI_COMMIT_SHORT_SHA myapp:latest 
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
-    - docker stop myapp || true
-    - docker rm myapp || true
-    - docker run -d --name myapp -p 80:80 --restart=always myapp:latest
-    - echo "Deployment completed!"
-  only:
-    - main
-  dependencies:
-    - build-job
-  tags:
-    - docker
+#На VM 
+sudo wget https://repo.zabbix.com/zabbix/7.4/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_7.4+debian13_all.deb
+sudo dpkg -i zabbix-release_latest_7.4+debian13_all.deb
+sudo apt update 
+sudo apt install zabbix-agent
+sudo nano /etc/zabbix/zabbix_agentd.conf
+# изменил
+#Server=192.168.31.167,192.168.56.0/24
+#ServerActive=192.168.56.1
+sudo systemctl restart zabbix-agent
+sudo systemctl enable zabbix-agent 
+
 ....
 ....
 ```
 
 ![2.png](https://github.com/anarxim7/Postnikov_Igor-homework/blob/main/img/2.png)
 ![2.1.png](https://github.com/anarxim7/Postnikov_Igor-homework/blob/main/img/2.1.png)
+![2.2.png](https://github.com/anarxim7/Postnikov_Igor-homework/blob/main/img/2.png)
+![2.3.png](https://github.com/anarxim7/Postnikov_Igor-homework/blob/main/img/2.1.png)
 
